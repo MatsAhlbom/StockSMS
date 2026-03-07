@@ -1,0 +1,6 @@
+{
+    "AAPL": {
+        "type": "floor",
+        "target": 260.0
+    }
+}
