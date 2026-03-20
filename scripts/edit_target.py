@@ -22,11 +22,6 @@ TYPE:
     ceiling   trigger when price >= target
     floor     trigger when price <= target
 
-Examples:
-    add AAPL ceiling 250
-    set TSLA floor 390
-    remove NVDA
-    list
 """)
 
 with open(FILE_NAME, "r") as f:

@@ -1,0 +1,22 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# Flask / local app state
+instance/
+
+# Optional: local logs
+*.log
+
+# Targets
+targets.json

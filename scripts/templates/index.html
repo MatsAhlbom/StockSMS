@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Alert</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page">
+        <h1>Simple UI Test</h1>
+
+        <div class="top-row">
+            <div class="panel targets-panel">
+                <h2>Current Targets</h2>
+
+                <div class="taregts-box">
+                    {% if targets %}
+                        {% for symbol, data in targets.items() %}
+                            <div class="targets-entry">
+                                <div class="target-message">
+                                    <code>{{ symbol }} {{ data.type }} {{ data.target }}</code>
+                                    <code class="success">Active</code>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <code>None</code>
+                    {% endif %}
+                </div>
+            
+            </div>
+
+            <div class="panel main-panel">
+
+                <div class="history-box" id="history-box">
+                <script>
+                    window.addEventListener("load", function () {
+                        const historyBox = document.getElementById("history-box");
+                        if (historyBox) {
+                            historyBox.scrollTop = historyBox.scrollHeight;
+                        }
+                    });
+                </script>
+                    {% if history %}
+                        {% for entry in history %}
+                            <div class="history-entry">
+                                <div class="history-message {% if entry.ok %}success{% else %}error{% endif %}">
+                                    <code> {{ entry.message }} </code>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% elif message %}
+                        <div class="single-message {% if ok %}success{% else %}error{% endif %}">
+                            <code>{{ message }}</code>
+                        </div>
+                    {% else %}
+                        <p></p>
+                    {% endif %}
+                </div>
+
+                <form method="POST" class="command-form">
+                    <input
+                        type="text"
+                        name="command"
+                        class="command-input"
+                        placeholder="Command..."
+                        value="{{ command if command else '' }}"
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="send-button">Send</button>
+                </form>
+
+                <div class="help-text">
+                    <code>Type 'help' for usage</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
