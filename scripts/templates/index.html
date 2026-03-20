@@ -8,24 +8,28 @@
 </head>
 <body>
     <div class="page">
-        <h1>Simple UI Test</h1>
+        <h1 class="header text">Control Panel</h1>
 
         <div class="top-row">
             <div class="panel targets-panel">
-                <h2>Current Targets</h2>
+                <h2 class="text">Current Targets</h2>
 
                 <div class="taregts-box">
                     {% if targets %}
                         {% for symbol, data in targets.items() %}
                             <div class="targets-entry">
                                 <div class="target-message">
+                                    {% if (data.type == "bb") %}
+                                    <code>{{ symbol }} bollinger band</code>
+                                    {% else %}
                                     <code>{{ symbol }} {{ data.type }} {{ data.target }}</code>
-                                    <code class="success">Active</code>
+                                    {% endif %}
+                                    <code class="{% if data.active %} success {% else %} error {% endif %}">{% if data.active %} Active {% else %} Triggered {% endif %}</code>
                                 </div>
                             </div>
                         {% endfor %}
                     {% else %}
-                        <code>None</code>
+                        <code>No targets saved</code>
                     {% endif %}
                 </div>
             
@@ -58,21 +62,22 @@
                         <p></p>
                     {% endif %}
                 </div>
-
-                <form method="POST" class="command-form">
-                    <input
-                        type="text"
-                        name="command"
-                        class="command-input"
-                        placeholder="Command..."
-                        value="{{ command if command else '' }}"
-                        autocomplete="off"
-                    >
-                    <button type="submit" class="send-button">Send</button>
-                </form>
-
-                <div class="help-text">
-                    <code>Type 'help' for usage</code>
+                <div class="bottom-section">
+                    <form method="POST" class="command-form">
+                        <input
+                            type="text"
+                            name="command"
+                            class="command-input"
+                            placeholder="Command..."
+                            value="{{ command if command else '' }}"
+                            autocomplete="off"
+                        >
+                        <button type="submit" class="send-button">Send</button>
+                    </form>
+    
+                    <div class="help-text">
+                        <code>Type 'help' for usage</code>
+                    </div>
                 </div>
             </div>
         </div>

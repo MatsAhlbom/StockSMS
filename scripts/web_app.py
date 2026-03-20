@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request
-from command_handler import run_command
+from flask import Flask, render_template, request, redirect, url_for
+from command_handler import run_command, load_targets
 
-HISTORY_MAX_LEN = 5
+HISTORY_MAX_LEN = 10
 
 app = Flask(__name__)
 
@@ -18,22 +18,12 @@ def home():
         if len(history) > HISTORY_MAX_LEN:
             history.pop(0)
 
-        return render_template(
-            "index.html",
-            message=result["message"],
-            ok=result["ok"],
-            command=command,
-            targets=result["targets"],
-            history=history
-        )
+        return redirect(url_for("home"))
 
     return render_template(
         "index.html",
-        message="",
-        ok=True,
-        command="",
-        targets={},
-        history=[]
+        targets=load_targets(),
+        history=history
     )
 
 if __name__ == "__main__":
