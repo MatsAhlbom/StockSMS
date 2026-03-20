@@ -19,4 +19,4 @@ instance/
 *.log
 
 # Targets
-targets.json
+scripts/targets.json
