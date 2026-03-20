@@ -62,7 +62,7 @@ def save_targets(targets):
         json.dump(targets, f, indent=4)
 
 def calc_bb(symbol):
-    hist = yf.Ticker(symbol).history(period="5d", interval="1h")
+    hist = yf.Ticker(symbol).history(period="1d", interval="5m")
     closes = hist["Close"].tail(20)
 
     ma = closes.mean()

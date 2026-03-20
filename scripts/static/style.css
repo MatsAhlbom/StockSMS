@@ -94,7 +94,7 @@ body {
 
 .taregts-box,
 .history-box {
-    min-height: 100px;
+    min-height: 50px;
     overflow-y: auto;
     border: 1px solid var(--border-soft);
     border-radius: 12px;

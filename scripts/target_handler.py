@@ -35,8 +35,6 @@ while True:
 
         # Add new symbols and reset triggered if a rule changed
         for symbol, data in new_targets.items():
-            print(data)
-            print(targets)
             if symbol not in tickers:
                 tickers[symbol] = yf.Ticker(symbol)
                 print(f"added {symbol} with {data['type']} target {data['target']}")
@@ -57,7 +55,7 @@ while True:
                 elif rule_type == "floor":
                     hit_target = price <= target
                 elif rule_type == "bb":
-                    hit_target = (price < target.lower or price > target.upper)
+                    hit_target = (price < target["lower"] or price > target["upper"])
                 else:
                     print(f"{symbol} has invalid type: {rule_type}")
                     continue

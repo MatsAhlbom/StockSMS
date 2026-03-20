@@ -5,7 +5,7 @@
 2. [klar] Byta ut backend-logik
     -skilland i add/set?
 
-3. första webbversion
+3. [klar] första webbversion
     Mål:
         Bygg en minimal lokal webbsida som kan:
         visa nuvarande targets
@@ -29,3 +29,10 @@
 
     [klar] 3.7 lägg till historikruta 
 
+4. Få ut på server
+
+5. Börja skicka riktiga notiser när TARGET är nått
+
+6. Kolla på att byta till SQLite
+
+7. Olika användare
