@@ -3,7 +3,6 @@
 1. [klar] UI skiss (UI_skiss.png)
 
 2. [klar] Byta ut backend-logik
-    -skilland i add/set?
 
 3. [klar] första webbversion
     

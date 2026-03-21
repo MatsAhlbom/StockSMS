@@ -13,10 +13,11 @@ FILE_NAME = "targets.json"
 tickers = {}
 targets = {}
 
+
 def trigger_function(symbol, price, rule_type):
     set_target_inactive(symbol=symbol)
-    print(f"{symbol} hit its {rule_type} target price: {price}")
     send_notifier(DISCORD_ID, f"${symbol} hit its {rule_type} target. Current price: {price}")
+    print(f"{symbol} hit its {rule_type} target price: {price}")
 
 while True:
     try:

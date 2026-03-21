@@ -23,7 +23,25 @@ def init_db():
                             bb_lower REAL, 
                             active INTEGER NOT NULL DEFAULT 1
                     )""")
+        cursor.execute("""CREATE TABLE IF NOT EXISTS app_state (
+                            key TEXT PRIMARY KEY,
+                            value INTEGER NOT NULL
+                    )""")
+        cursor.execute("""INSERT OR IGNORE INTO app_state (key, value) VALUES ('targets_version', 0)""")
+
+def bumb_targets_version(cursor):
+    cursor.execute("""UPDATE app_state
+                        SET value = value + 1
+                        WHERE key = 'targets_version'
+                    """)
         
+def get_targets_version():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""SELECT value FROM app_state WHERE key = 'targets_version'""")
+        row = cursor.fetchone()
+        return row[0] if row else 0
+
 def row_to_target(row):
     if row["type"] == "bb":
         target = {
@@ -69,6 +87,7 @@ def add_target(symbol, rule_type, target_value=None, bb_upper=None, bb_lower=Non
             cursor.execute("""INSERT INTO targets (symbol, type, target_value, bb_upper, bb_lower, active) 
                             VALUES (?, ?, ?, ?, ?, ?)""", 
                             (symbol, rule_type, target_value, bb_upper, bb_lower, int(active)))
+            bumb_targets_version(cursor)
         return True
     except sqlite3.IntegrityError:
         return False
@@ -84,18 +103,30 @@ def update_target(symbol, rule_type, target_value=None, bb_upper=None, bb_lower=
                                 active = ?
                             WHERE symbol = ?
                         """, (rule_type, target_value, bb_upper, bb_lower, int(active), symbol))
-        return cursor.rowcount > 0
+        
+        if cursor.rowcount > 0:
+            bumb_targets_version(cursor)
+            return True
+        return False
         
 def set_target_inactive(symbol):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("""UPDATE targets SET active = 0 WHERE symbol = ?""", (symbol,))
-        return cursor.rowcount > 0
+        cursor.execute("""UPDATE targets SET active = 0 WHERE symbol = ? AND active = 1""", (symbol,))
+
+        if cursor.rowcount > 0:
+            bumb_targets_version(cursor)
+            return True
+        return False
     
 def remove_target(symbol):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("""DELETE FROM targets WHERE symbol = ?""", (symbol,))
-        return cursor.rowcount > 0
+
+        if cursor.rowcount > 0:
+            bumb_targets_version(cursor)
+            return True
+        return False
 
 
