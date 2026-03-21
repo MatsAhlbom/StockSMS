@@ -6,7 +6,7 @@ from .db_handler import get_all_targets, set_target_inactive
 from .discord_notifier import send_notifier
 
 load_dotenv()
-DISCORD_ID = os.getenv("MASSE22_DISCORD_ID")
+DISCORD_ID = os.getenv("DISCORD_ID")
 
 CHECK_INTERVAL = 20
 FILE_NAME = "targets.json"
