@@ -23,8 +23,8 @@
 
 4. [klar] Få ut på server
 
-5. Börja skicka riktiga notiser när TARGET är nått
-    -Kan göras ganska smidigt med discordbot
+5. [klar] Börja skicka riktiga notiser när TARGET är nått
+    skickas via discord bot ut till användare
 
 6. [klar] Byta till SQLite
     [klar] 6.1 Skriva db logik

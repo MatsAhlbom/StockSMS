@@ -1,5 +1,5 @@
 import yfinance as yf
-from db_handler import get_all_targets, add_target, remove_target, update_target
+from .db_handler import get_all_targets, add_target, remove_target, update_target
 
 FILE_NAME = "targets.json"
 

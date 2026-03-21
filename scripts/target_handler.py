@@ -1,26 +1,32 @@
 import yfinance as yf
 import time
-from db_handler import get_all_targets, set_target_inactive
+import os
+from dotenv import load_dotenv
+from .db_handler import get_all_targets, set_target_inactive
+from .discord_notifier import send_notifier
+
+load_dotenv()
+DISCORD_ID = os.getenv("MASSE22_DISCORD_ID")
 
 CHECK_INTERVAL = 20
 FILE_NAME = "targets.json"
 tickers = {}
+targets = {}
 
 def trigger_function(symbol, price, rule_type):
     set_target_inactive(symbol=symbol)
     print(f"{symbol} hit its {rule_type} target price: {price}")
+    send_notifier(DISCORD_ID, f"${symbol} hit its {rule_type} target. Current price: {price}")
 
 while True:
     try:
         new_targets = get_all_targets()
 
-        # Remove symbols no longer in the JSON file
         for symbol in list(targets):
             if symbol not in new_targets:
                 del tickers[symbol]
                 print(f"removed {symbol}")
 
-        # Add new symbols and reset triggered if a rule changed
         for symbol, data in new_targets.items():
             if symbol not in tickers:
                 tickers[symbol] = yf.Ticker(symbol)
