@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-USER_ID = os.getenv("MASSE22_DISCORD_ID")
+USER_ID = os.getenv("DISCORD_ID")
 
 HEADERS = {
     "Authorization": f"Bot {BOT_TOKEN}",
