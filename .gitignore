@@ -20,3 +20,4 @@ instance/
 
 # Targets
 targets.json
+stocksms.db

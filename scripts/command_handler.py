@@ -1,5 +1,5 @@
-import json
 import yfinance as yf
+from db_handler import get_all_targets, add_target, remove_target, update_target
 
 FILE_NAME = "targets.json"
 
@@ -8,12 +8,14 @@ rules = ["ceiling", "floor", "bb"]
 def help_msg():
     return ("""Command formats: 
     add SYMBOL TYPE TARGET
+    set SYMBOL TYPE TARGET
     remove SYMBOL
     list
     help
 
 Actions:
     'add SYMBOL TYPE TARGET'    add a new or edit symbol rule
+    'set SYMBOL TYPE TARGET'    edit a symbol rule
     'remove SYMBOL'             remove a symbol
     'list'                      list all symbols and their rules
     'help'                      show this message
@@ -40,26 +42,12 @@ def error(message, targets):
         "targets": targets
     }
 
-
 def success(message, targets):
     return {
         "ok": True,
         "message": message,
         "targets": targets
     }
-
-def load_targets():
-    try:
-        with open(FILE_NAME, "r") as f:
-                targets = json.load(f)
-    except FileNotFoundError:
-        return {}
-
-    return targets
-
-def save_targets(targets):
-    with open(FILE_NAME, "w") as f:
-        json.dump(targets, f, indent=4)
 
 def calc_bb(symbol):
     hist = yf.Ticker(symbol).history(period="1d", interval="5m")
@@ -76,7 +64,7 @@ def calc_bb(symbol):
 def run_command(command):
 
     try:
-        targets = load_targets()
+        targets = get_all_targets()
 
     except Exception as e:
         return error(str(e), {})
@@ -88,10 +76,10 @@ def run_command(command):
     
     action = parts[0].lower()
 
-    if action == "help":
+    if action in ("help"):
         return success(help_msg(), targets)
 
-    elif action == "list":
+    elif action in ("list"):
         if not targets:
             return success("No targets saved", targets)
 
@@ -99,7 +87,6 @@ def run_command(command):
         for symbol, data in targets.items():
             lines.append(f"{symbol}: {data['type']} {data['target']}")
         return success("\n".join(lines), targets)
-
 
     if action in ("add"):
         
@@ -121,32 +108,58 @@ def run_command(command):
 
         if rule_type == "bb":
             target = calc_bb(symbol)
+
+            if add_target(symbol=symbol, rule_type=rule_type, bb_upper=target["upper"], bb_lower=target["lower"], active=True):
+                return success(f"Added {symbol} with {rule_type}", targets)
+                
         else:
             try:
                 target = float(target_value)
+
+                if add_target(symbol=symbol, rule_type=rule_type, target_value=target, active=True):
+                    return success(f"Added {symbol} with {rule_type} target {target}", targets)
             except ValueError:
                 return error("Target needd to be a float.", targets)
 
-        targets[symbol] = {
-            "type": rule_type,
-            "target": target,
-            "active": True
-        }
+        return error(f"{symbol} alredy in targets, try 'set' to change it", targets)
+    
+            
+    elif action in ("set"):
+        if len(parts) != 4:
+            return error(f"Format: {action} SYMBOL TYPE TARGET", targets)
 
-        save_targets(targets)
+        _, symbol, rule_type, target_value = parts
+        symbol = symbol.upper()
 
-        if action == "add":
-            if rule_type == "bb":
-                return success(f"Added {symbol} with {rule_type}", targets)
-            else:
-                return success(f"Added {symbol} with {rule_type} target {target}", targets)
+        if symbol_exists(symbol):
+            pass
         else:
-            if rule_type == "bb":
-                return success(f"Uppdated {symbol} with {rule_type}", targets)
-            else:
-                return success(f"Updated {symbol} to {rule_type} target {target}", targets)
+            return error(f"{symbol} does not exist", targets)
+        
+        rule_type = rule_type.lower()
 
-    elif action == "remove":
+        if rule_type not in rules:
+            return error(f"not a valid rule.", targets)
+
+        if rule_type == "bb":
+            target = calc_bb(symbol)
+
+            if update_target(symbol=symbol, rule_type=rule_type, bb_upper=target["upper"], bb_lower=target["lower"], active=True):
+                return success(f"Set {symbol} with {rule_type}", targets)
+                
+        else:
+            try:
+                target = float(target_value)
+
+                if update_target(symbol=symbol, rule_type=rule_type, target_value=target, active=True):
+                    return success(f"Set {symbol} with {rule_type} target {target}", targets)
+            except ValueError:
+                return error("Target needd to be a float.", targets)
+            
+        return error(f"{symbol} does not have a target, try adding with 'add'", targets)
+ 
+
+    elif action in ("remove"):
         if len(parts) != 2:
             return error("Format: remove SYMBOL", targets)
 
@@ -156,9 +169,7 @@ def run_command(command):
         if symbol not in targets:
             return error(f"{symbol} does not exist in targets.", targets)
 
-        del targets[symbol]
-
-        save_targets(targets)
+        remove_target(symbol=symbol)
 
         return success(f"Removed {symbol}", targets)
 

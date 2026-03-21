@@ -1,31 +1,18 @@
 import yfinance as yf
 import time
-import json
-import math
+from db_handler import get_all_targets, set_target_inactive
 
 CHECK_INTERVAL = 20
 FILE_NAME = "targets.json"
-
-targets = {}
 tickers = {}
 
 def trigger_function(symbol, price, rule_type):
+    set_target_inactive(symbol=symbol)
     print(f"{symbol} hit its {rule_type} target price: {price}")
-    targets[symbol]["active"] = False
-    save_targets(targets)
-
-def load_targets():
-    with open(FILE_NAME, "r") as f:
-        return json.load(f)
-    
-def save_targets(targets):
-    with open(FILE_NAME, "w") as f:
-        json.dump(targets, f, indent=4)
-
 
 while True:
     try:
-        new_targets = load_targets()
+        new_targets = get_all_targets()
 
         # Remove symbols no longer in the JSON file
         for symbol in list(targets):
@@ -38,9 +25,6 @@ while True:
             if symbol not in tickers:
                 tickers[symbol] = yf.Ticker(symbol)
                 print(f"added {symbol} with {data['type']} target {data['target']}")
-
-            elif targets[symbol] != data:
-                print(f"{symbol} has been updated")
 
         targets = new_targets
 

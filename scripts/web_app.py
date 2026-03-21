@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
-from command_handler import run_command, load_targets
+from command_handler import run_command
+from db_handler import get_all_targets
 
 HISTORY_MAX_LEN = 10
 
@@ -22,7 +23,7 @@ def home():
 
     return render_template(
         "index.html",
-        targets=load_targets(),
+        targets=get_all_targets(),
         history=history
     )
 

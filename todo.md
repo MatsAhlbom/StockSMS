@@ -6,14 +6,6 @@
     -skilland i add/set?
 
 3. [klar] första webbversion
-    Mål:
-        Bygg en minimal lokal webbsida som kan:
-        visa nuvarande targets
-        ta emot ett kommando i ett textfält
-        skicka kommandot till run_command()
-        visa svar i historikrutan
-        Du ska inte försöka göra sidan snygg nu.
-        Målet är bara att få hela kedjan att fungera.
     
     [klar] 3.1 skapa filstruktur
 
@@ -29,10 +21,16 @@
 
     [klar] 3.7 lägg till historikruta 
 
-4. Få ut på server
+4. [klar] Få ut på server
 
 5. Börja skicka riktiga notiser när TARGET är nått
+    -Kan göras ganska smidigt med discordbot
 
-6. Kolla på att byta till SQLite
+6. [klar] Byta till SQLite
+    [klar] 6.1 Skriva db logik
+        
+    [klar] 6.2 flytta logik command_handler
+
+    [klar] 6.3 flytta logik target_handler
 
 7. Olika användare
